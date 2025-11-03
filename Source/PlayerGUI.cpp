@@ -3,13 +3,14 @@
 PlayerGUI::PlayerGUI::PlayerGUI(PlayerAudio& audioEngine) : playerAudio(audioEngine)
 {
     // Add buttons
-    for (auto* btn : { &loadButton, &restartButton , &stopButton,&pauseButton,&playButton,&goToStartButton,&goToEndButton })
+    for (auto* btn : { &loadButton, &restartButton , &stopButton,&pauseButton,&playButton,&goToStartButton,&goToEndButton,&muteButton, &loopButton })
     {
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
-    addAndMakeVisible(&muteButton);
-    addAndMakeVisible(&loopButton);
+    muteButton.setClickingTogglesState(true);
+    loopButton.setClickingTogglesState(true);
+    
 
     // Volume slider
     volumeSlider.setRange(0.0, 1.0, 0.01);
@@ -71,55 +72,55 @@ PlayerGUI::~PlayerGUI()
 void PlayerGUI::resized()
 {
     int y = 20;
-    loadButton.setBounds(20, y, 100, 40);
-    restartButton.setBounds(140, y, 80, 40);
-    stopButton.setBounds(240, y, 80, 40);
-    goToStartButton.setBounds(340,y, 80, 40);
-    goToEndButton.setBounds(440, y, 80, 40);
-    muteButton.setBounds(540, y, 80, 40);
-    loopButton.setBounds(620,  y, 80, 40);
+    auto width = getWidth();
+    loadButton.setBounds(20, y, 80, 40);
+    restartButton.setBounds(120, y, 80, 40);
+    stopButton.setBounds(220, y, 80, 40);
+    goToStartButton.setBounds(320,y, 80, 40);
+    goToEndButton.setBounds(420, y, 80, 40);
+    pauseButton.setBounds(520, y, 80, 40);
+    playButton.setBounds(620, y, 80, 40);
     /*prevButton.setBounds(340, y, 80, 40);
     nextButton.setBounds(440, y, 80, 40);*/
     
-    volumeSlider.setBounds(400, 4*y, 100, 100);
-    speedSlider.setBounds(550,4*y,100,100);
-    loopSlider.setBounds(20, 7* y-5, 300, 25);
-    positionSlider.setBounds(20, 7* y, 300, 15);
+    muteButton.setBounds(20, 4*y, 80, 40);
+    loopButton.setBounds(120,  4*y, 80, 40);
+    volumeSlider.setBounds(500, 4*y, 100, 100);
+    speedSlider.setBounds(650,4*y,100,100);
+    loopSlider.setBounds(20, 9* y+5, width-140, 25);
+    positionSlider.setBounds(20, 9* y+10, width-140, 15);
     
-    positionLabel.setBounds(220, 4* y, 100, 40);
+    positionLabel.setBounds(20+(width-140), 9 * y, 100, 40);
     
-    pauseButton.setBounds(20, 4*y, 80, 40);
-    playButton.setBounds(120, 4*y, 80, 40);
     
-    metadataLabel.setBounds(20, 8*y,400, 60);
+    metadataLabel.setBounds(20, 6*y,400, 60);
 
-    playlistBox.setBounds(20,12*y,400,400);
+    playlistBox.setBounds(10,12*y,getWidth()-10, 400);
     
 }
 
 void PlayerGUI::paint(juce::Graphics& g)
 {
 
-    g.fillAll(juce::Colour(0xff44444E));
+    g.fillAll(juce::Colour(0xff19183B));
 
     auto& lookAndFeel = juce::LookAndFeel::getDefaultLookAndFeel();
 
     // Set the default colours for all TextButtons
-    lookAndFeel.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff450693));
+    lookAndFeel.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff7F8CAA));
     // Set the default colours for all Sliders
-    lookAndFeel.setColour(juce::Slider::thumbColourId, juce::Colour(0xff450693));
-    lookAndFeel.setColour(juce::Slider::trackColourId, juce::Colour(0xffFFC400));
-    lookAndFeel.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffFFC400));
-    loopSlider.setColour(juce::Slider::trackColourId, juce::Colours::grey);
-    loopSlider.setColour(juce::Slider::thumbColourId, juce::Colour(0xffFFC400));
-
+    lookAndFeel.setColour(juce::Slider::thumbColourId, juce::Colour(0xff7F8CAA));
+    lookAndFeel.setColour(juce::Slider::trackColourId, juce::Colour(0xffE7F2EF));
+    lookAndFeel.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffE7F2EF));
+    //loopSlider.setColour(juce::Slider::trackColourId, juce::Colours::grey);
+    //loopSlider.setColour(juce::Slider::thumbColourId, juce::Colour(0xffFFC400));
 }
 
 void PlayerGUI::paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected)
 {
     if (rowIsSelected)
     {
-        g.fillAll(juce::Colours::blueviolet); // Highlight the selected track
+        g.fillAll(juce::Colour(0xff1A3D64)); // Highlight the selected track
     }
 
     // Get the track title from the audio engine
@@ -179,14 +180,36 @@ void PlayerGUI::buttonClicked(juce::Button* button)
              });
      }
             
-    muteButton.onClick = [this]()
+    if (button == &muteButton)
+    {
+        bool isMuted = muteButton.getToggleState();
+
+        if (isMuted)
         {
-            if (muteButton.getToggleState())
-                playerAudio.setGain(0);
-            else
-                playerAudio.setGain((float)volumeSlider.getValue());
-        };
+            playerAudio.setGain(0.0f);
+            muteButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+            muteButton.setButtonText("Unmute");
+        }
+        else
+        {
+            playerAudio.setGain(volumeSlider.getValue());
+            muteButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+            muteButton.setButtonText("Mute");
+        }
+    }
     
+    if (button == &loopButton)
+    {
+        if (button->getToggleState()) {
+			loopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+            loopButton.setButtonText("Looping");
+        }
+        else {
+            loopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+			loopButton.setButtonText("Loop");
+        }
+    }
+
     if (button == &restartButton)
     {
         playerAudio.play();
@@ -201,6 +224,7 @@ void PlayerGUI::buttonClicked(juce::Button* button)
     if (button == &pauseButton) {
         playerAudio.stop();
     }
+    
     if (button == &playButton) {
     
         playerAudio.play();
@@ -259,15 +283,18 @@ void PlayerGUI::timerCallback()
                 playerAudio.setPosition(loopSlider.getMinValue());
             if(loopSlider.getMinValue() > playerAudio.getPosition())
                 playerAudio.setPosition(loopSlider.getMinValue());
+			
         }
+        
 
 
         double currentPosition = playerAudio.getPosition();
-
+       
         // Update the slider's position.
         // The 'dontSendNotification' is CRITICAL to prevent a feedback loop where
         // this update triggers sliderValueChanged, which then tries to set the position again.
         positionSlider.setValue(currentPosition, juce::dontSendNotification);
+        
 
         // Format the time as MM:SS
         int minutes = static_cast<int>(currentPosition) / 60;
@@ -291,4 +318,9 @@ void PlayerGUI::listBoxItemClicked(int rowNumber, const juce::MouseEvent& e)
 {
     playerAudio.playTrack(rowNumber);
 
+}
+
+void PlayerGUI::ChangeVolumeSlider()
+{
+	volumeSlider.setValue(playerAudio.getGain());
 }

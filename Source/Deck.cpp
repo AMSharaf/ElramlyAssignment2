@@ -15,6 +15,32 @@ void Deck::setGain(float gain)
     playerAudio.setGain(gain);
 }
 
+double Deck::getGain(){
+    return playerAudio.getGain();
+}
+
+void Deck::setPosition(double pos) {
+    playerAudio.setPosition(pos);
+ }
+
+double Deck::getPosition() {
+	return playerAudio.getPosition();
+}
+
+void Deck::stop()
+{
+    playerAudio.stop();
+}
+void Deck::play()
+{
+    playerAudio.play();
+}
+
+void Deck::ChangeVolumeSlider() {
+    playerGUI.ChangeVolumeSlider();
+}
+
+
 // ✅ ADD THESE IMPLEMENTATIONS:
 void Deck::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {

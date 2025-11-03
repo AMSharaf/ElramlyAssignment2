@@ -93,12 +93,19 @@ juce::String PlayerAudio::getMeta()
 void PlayerAudio::setGain(float gain) {
     transportSource.setGain(gain);
 }
+
+double PlayerAudio::getGain() {
+    return transportSource.getGain();
+}
+
 void PlayerAudio::setPosition(double pos) {
     transportSource.setPosition(pos);
 };
+
 double PlayerAudio::getPosition() const{
     return transportSource.getCurrentPosition();
 };
+
 double PlayerAudio::getLength() const{
     return transportSource.getLengthInSeconds();
 };

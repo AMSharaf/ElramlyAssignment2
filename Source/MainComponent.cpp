@@ -5,18 +5,28 @@ MainComponent::MainComponent()
     addAndMakeVisible(deck1);
     addAndMakeVisible(deck2);
     
-
+    //addAndMakeVisible(SyncButton);
+    //SyncButton.addListener(this);
 
     addAndMakeVisible(masterVolumeSlider);
     masterVolumeSlider.addListener(this);
     masterVolumeSlider.setRange(0.0, 1.0); // 0.0 (silent) to 1.0 (full)
     masterVolumeSlider.setValue(0.5);
-    
+    masterVolumeSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+
+
+	addAndMakeVisible(SyncButton);
+    SyncButton.addListener(this);
+	addAndMakeVisible(StopAllButton);
+    StopAllButton.addListener(this);
+	addAndMakeVisible(PlayAllButton);
+    PlayAllButton.addListener(this);
 
     setSize(800, 600);
 
 
     setAudioChannels(0, 2); 
+
 }
 
 MainComponent::~MainComponent()
@@ -82,13 +92,14 @@ void MainComponent::releaseResources()
 void MainComponent::resized()
 {
     auto bounds = getLocalBounds();
-
-    auto sliderArea = bounds.removeFromBottom(50).reduced(20);
-    masterVolumeSlider.setBounds(sliderArea);
-
-    auto deckWidth = bounds.getWidth() / 2;
+	masterVolumeSlider.setBounds(bounds.removeFromBottom(50).reduced(10));
+	
+	SyncButton.setBounds(getWidth()/2-40, getHeight() - 100, 80, 40);
+	StopAllButton.setBounds(getWidth()/2-140, getHeight() - 100, 80, 40);
+	PlayAllButton.setBounds(getWidth()/2+60, getHeight() - 100, 80, 40);
+    auto deckWidth = bounds.getWidth()/ 2;
     deck1.setBounds(bounds.removeFromLeft(deckWidth));
-    deck2.setBounds(bounds);
+    deck2.setBounds(bounds.removeFromLeft(deckWidth));
 }
 
 void MainComponent::sliderValueChanged(juce::Slider* slider)
@@ -98,5 +109,33 @@ void MainComponent::sliderValueChanged(juce::Slider* slider)
         float volume = (masterVolumeSlider.getValue());
         deck1.setGain(1-volume);
         deck2.setGain(volume);
+        deck1.ChangeVolumeSlider();
+        deck2.ChangeVolumeSlider();
 	}
 }
+
+void MainComponent::buttonClicked(juce::Button* button)
+{
+    if(button == &SyncButton)
+    {
+        if(deck1.getPosition() > deck2.getPosition())
+        {
+            deck1.setPosition(deck2.getPosition());
+        }
+        else
+        {
+            deck2.setPosition(deck1.getPosition());
+		}
+	}
+    if(button == &StopAllButton)
+    {
+        deck1.stop();
+        deck2.stop();
+	}
+    if(button == &PlayAllButton)
+    {
+        deck1.play();
+        deck2.play();
+	}
+}
+

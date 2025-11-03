@@ -16,11 +16,12 @@ public:
     bool hasFinished() ;
     void play();
     void stop();
-    juce::String getMeta();
     void setGain(float gain);
     void setPosition(double pos);
     double getPosition() const;
     double getLength() const;
+    double getGain();
+    
 
     //playlist functions
     void addFilesToPlaylist(const juce::Array<juce::File>& files);
@@ -30,6 +31,7 @@ public:
     int getNumTracks() const;
     juce::String getTrackTitle(int trackIndex) const;
 
+    juce::String getMeta();
 private:
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;

@@ -19,12 +19,14 @@ public:
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate);
     void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill);
     void releaseResources();
+
     void timerCallback();
 
     //ListBox Functions 
     int getNumRows() override;
     void paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected) override;
     void listBoxItemClicked(int rowNumber, const juce::MouseEvent& e) override;
+    void ChangeVolumeSlider();
 
     bool wasPlaying=false;
 
@@ -41,8 +43,8 @@ private:
     juce::TextButton goToStartButton{ "|<" };
     juce::TextButton goToEndButton{ ">|" };
     
-    juce::ToggleButton muteButton{ "Mute" };
-    juce::ToggleButton loopButton{ "Loop" };
+    juce::TextButton muteButton{ "Mute" };
+    juce::TextButton loopButton{ "Loop" };
     
     juce::Slider volumeSlider;
     juce::Slider speedSlider;
@@ -55,6 +57,7 @@ private:
     juce::Label metadataLabel;
 
     juce::ListBox playlistBox;
+    
     std::unique_ptr<juce::FileChooser> fileChooser;
 
 
