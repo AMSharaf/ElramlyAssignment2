@@ -4,7 +4,13 @@ MainComponent::MainComponent()
 {
     addAndMakeVisible(deck1);
     addAndMakeVisible(deck2);
+    
 
+
+    addAndMakeVisible(masterVolumeSlider);
+    masterVolumeSlider.addListener(this);
+    masterVolumeSlider.setRange(0.0, 1.0); // 0.0 (silent) to 1.0 (full)
+    masterVolumeSlider.setValue(0.5);
     
 
     setSize(800, 600);
@@ -77,9 +83,20 @@ void MainComponent::resized()
 {
     auto bounds = getLocalBounds();
 
-    
+    auto sliderArea = bounds.removeFromBottom(50).reduced(20);
+    masterVolumeSlider.setBounds(sliderArea);
 
     auto deckWidth = bounds.getWidth() / 2;
     deck1.setBounds(bounds.removeFromLeft(deckWidth));
     deck2.setBounds(bounds);
+}
+
+void MainComponent::sliderValueChanged(juce::Slider* slider)
+{
+    if (slider == &masterVolumeSlider)
+    {
+        float volume = (masterVolumeSlider.getValue());
+        deck1.setGain(1-volume);
+        deck2.setGain(volume);
+	}
 }
