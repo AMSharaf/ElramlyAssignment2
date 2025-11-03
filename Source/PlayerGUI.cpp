@@ -56,7 +56,13 @@ PlayerGUI::PlayerGUI()
     metadataLabel.setFont(juce::Font(16.0f));
     metadataLabel.setJustificationType(juce::Justification::centredLeft);
 
+    //playlist Box
+    addAndMakeVisible(playlistBox);
+    playlistBox.setModel(this);
+
+
     startTimerHz(30);
+
 
 
 
@@ -90,6 +96,8 @@ void PlayerGUI::resized()
     playButton.setBounds(120, 4*y, 80, 40);
     
     metadataLabel.setBounds(20, 8*y,400, 60);
+
+    playlistBox.setBounds(20,12*y,400,400);
     
 }
 
@@ -111,6 +119,21 @@ void PlayerGUI::paint(juce::Graphics& g)
 
 }
 
+void PlayerGUI::paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected)
+{
+    if (rowIsSelected)
+    {
+        g.fillAll(juce::Colours::blueviolet); // Highlight the selected track
+    }
+
+    // Get the track title from the audio engine
+    auto title = playerAudio.getTrackTitle(rowNumber);
+
+    g.setColour(juce::Colours::white);
+    g.drawText(title, 5, 0, width - 10, height, juce::Justification::centredLeft);
+}
+
+
 void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     playerAudio.prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -130,6 +153,7 @@ void PlayerGUI::buttonClicked(juce::Button* button)
 {
     if (button == &loadButton)
      {
+
          juce::FileChooser chooser("Select audio files...",
              juce::File{},
              "*.wav;*.mp3");
@@ -138,15 +162,24 @@ void PlayerGUI::buttonClicked(juce::Button* button)
              "Select an audio file...",
              juce::File{},
              "*.wav;*.mp3");
-     
+            
          fileChooser->launchAsync(
             juce::FileBrowserComponent::openMode|juce::FileBrowserComponent::canSelectFiles,
              [this](const juce::FileChooser& fc)
              {
-                 auto file = fc.getResult();
-                 if (file.existsAsFile())
+
+                 auto files = fc.getResults();
+
+                 if (files.size() > 0)
                  {
-                     playerAudio.loadFile(file);
+                     // We have files! Add them to the audio engine
+                     playerAudio.addFilesToPlaylist(files);
+
+                     // Update the list box to show the new tracks
+                     playlistBox.updateContent();
+
+                     // Optional: play the first track in the new list
+                     playerAudio.playTrack(0);
                  }
              });
      }
@@ -205,6 +238,13 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider)
 
 void PlayerGUI::timerCallback()
 {
+    bool isPlaying = playerAudio.isPlaying();
+    if (wasPlaying && !isPlaying)
+    {
+        playerAudio.playNextTrack();
+    }
+    // Update the flag for the next timer tick
+    wasPlaying = isPlaying;
     if (playerAudio.getLength() > 0 && playerAudio.getLength()!=positionSlider.getMaximum()+0.1)
     {
         // A new file has been detected! Configure the slider now.
@@ -218,7 +258,7 @@ void PlayerGUI::timerCallback()
 
 
     // Check if the transport source is playing
-    if (playerAudio.isPlaying())
+    if (isPlaying)
     {
         if (loopButton.getToggleState()) {
             if(playerAudio.getPosition() >= loopSlider.getMaxValue()-0.1)
@@ -244,4 +284,17 @@ void PlayerGUI::timerCallback()
         metadataLabel.setText(playerAudio.getMeta(), juce::dontSendNotification);
         positionLabel.setText(timeString, juce::dontSendNotification);
     }
+
+
+}
+
+int PlayerGUI::getNumRows()
+{
+    return playerAudio.getNumTracks();
+}
+
+void PlayerGUI::listBoxItemClicked(int rowNumber, const juce::MouseEvent& e)
+{
+    playerAudio.playTrack(rowNumber);
+
 }

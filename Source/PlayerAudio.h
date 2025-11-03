@@ -21,6 +21,14 @@ public:
     double getPosition() const;
     double getLength() const;
 
+    //playlist functions
+    void addFilesToPlaylist(const juce::Array<juce::File>& files);
+    void playTrack(int trackIndex);
+    void playNextTrack();
+
+    int getNumTracks() const;
+    juce::String getTrackTitle(int trackIndex) const;
+
 private:
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
@@ -28,6 +36,9 @@ private:
     juce::AudioTransportSource transportSource;
     juce::ResamplingAudioSource resamplingSource{ &transportSource, false };
     juce::String displayString;
+
+    juce::Array<juce::File> trackList;
+    int currentTrackIndex = -1;
 
    // JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerAudio)
 };

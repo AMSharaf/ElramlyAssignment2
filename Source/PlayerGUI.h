@@ -5,7 +5,8 @@
 class PlayerGUI : public juce::Component,
     public juce::Button::Listener,
     public juce::Slider::Listener,
-    public juce::Timer
+    public juce::Timer,
+    public juce::ListBoxModel
 {
 public:
     PlayerGUI();
@@ -19,6 +20,11 @@ public:
     void releaseResources();
     void timerCallback();
 
+    //ListBox Functions 
+    int getNumRows() override;
+    void paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected) override;
+    void listBoxItemClicked(int rowNumber, const juce::MouseEvent& e) override;
+
 private:
     PlayerAudio playerAudio;
 
@@ -31,18 +37,24 @@ private:
     juce::TextButton playButton{ "play " };
     juce::TextButton goToStartButton{ "|<" };
     juce::TextButton goToEndButton{ ">|" };
+    
     juce::ToggleButton muteButton{ "Mute" };
     juce::ToggleButton loopButton{ "Loop" };
+    
     juce::Slider volumeSlider;
     juce::Slider speedSlider;
     juce::Slider positionSlider;
     juce::Slider loopSlider;
+
     juce::Label positionLabel;
     juce::Label volumeLabel;
     juce::Label speedLabel;
     juce::Label metadataLabel;
 
+    juce::ListBox playlistBox;
     std::unique_ptr<juce::FileChooser> fileChooser;
+
+    bool wasPlaying = false;
 
 
     // Event handlers
