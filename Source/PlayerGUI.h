@@ -3,13 +3,14 @@
 #include "PlayerAudio.h"
 
 class PlayerGUI : public juce::Component,
+
     public juce::Button::Listener,
     public juce::Slider::Listener,
     public juce::Timer,
     public juce::ListBoxModel
 {
 public:
-    PlayerGUI();
+    PlayerGUI(PlayerAudio& audioEngine);
     ~PlayerGUI() override;
 
     void resized() override;
@@ -28,7 +29,7 @@ public:
     bool wasPlaying=false;
 
 private:
-    PlayerAudio playerAudio;
+    PlayerAudio& playerAudio;
 
     // GUI elements
         // GUI Controls
@@ -56,7 +57,7 @@ private:
     juce::ListBox playlistBox;
     std::unique_ptr<juce::FileChooser> fileChooser;
 
-   
+
 
     // Event handlers
     void buttonClicked(juce::Button* button) override;

@@ -1,6 +1,6 @@
 #include "PlayerGUI.h"
 
-PlayerGUI::PlayerGUI()
+PlayerGUI::PlayerGUI::PlayerGUI(PlayerAudio& audioEngine) : playerAudio(audioEngine)
 {
     // Add buttons
     for (auto* btn : { &loadButton, &restartButton , &stopButton,&pauseButton,&playButton,&goToStartButton,&goToEndButton })
@@ -60,11 +60,7 @@ PlayerGUI::PlayerGUI()
     addAndMakeVisible(playlistBox);
     playlistBox.setModel(this);
 
-
     startTimerHz(30);
-
-
-
 
 }
 
@@ -132,7 +128,6 @@ void PlayerGUI::paintListBoxItem(int rowNumber, juce::Graphics& g, int width, in
     g.setColour(juce::Colours::white);
     g.drawText(title, 5, 0, width - 10, height, juce::Justification::centredLeft);
 }
-
 
 void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
@@ -218,7 +213,6 @@ void PlayerGUI::buttonClicked(juce::Button* button)
     }
     
 }
-
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider)
 {

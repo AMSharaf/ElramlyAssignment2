@@ -1,19 +1,27 @@
-#pragma once						// MainComponent.h
+﻿#pragma once
 #include <JuceHeader.h>
-#include "PlayerGUI.h"
+#include "Deck.h"
 
+// ✅ 1. MAKE SURE IT INHERITS
 class MainComponent : public juce::AudioAppComponent
 {
 public:
     MainComponent();
-    ~MainComponent() override;
+    ~MainComponent() override; // Need a destructor to shut down audio
 
+    // ✅ 2. DECLARE THE AUDIO CALLBACKS
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
     void releaseResources() override;
+
+
     void resized() override;
 
 private:
-    PlayerGUI player1;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
+    Deck deck1;
+    Deck deck2;
+
+
+    juce::AudioBuffer<float> mixBuffer;
+
 };

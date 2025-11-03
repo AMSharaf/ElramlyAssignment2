@@ -1,4 +1,4 @@
-#pragma once							// PlayerAudio.h
+#pragma once						
 #include <JuceHeader.h>
 
 class PlayerAudio
