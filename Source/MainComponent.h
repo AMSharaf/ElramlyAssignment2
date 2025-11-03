@@ -1,4 +1,3 @@
-
 #pragma once						// MainComponent.h
 #include <JuceHeader.h>
 #include "PlayerGUI.h"

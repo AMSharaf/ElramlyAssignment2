@@ -12,7 +12,6 @@ public:
     void releaseResources();
     void setResamplingRatio(float r);
     bool loadFile(const juce::File& file);
-    void loop(bool loopState);
     bool isPlaying();
     void play();
     void stop();

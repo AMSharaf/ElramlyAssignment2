@@ -1,4 +1,4 @@
-#include "PlayerAudio.h"
+﻿#include "PlayerAudio.h"
 
 PlayerAudio::PlayerAudio()
 {
@@ -67,14 +67,6 @@ bool PlayerAudio::loadFile(const juce::File& file)
 
     }
     return true;
-}
-
-void PlayerAudio::loop(bool loopState)
-{
-    if (readerSource != nullptr) {
-        readerSource->setLooping(loopState);
-
-    }
 }
 
 void PlayerAudio::play()
