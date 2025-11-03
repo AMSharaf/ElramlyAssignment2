@@ -28,6 +28,9 @@ public:
     void listBoxItemClicked(int rowNumber, const juce::MouseEvent& e) override;
     void ChangeVolumeSlider();
 
+    void getNextTrack();
+    void getPrviousTrack();
+
     bool wasPlaying=false;
 
 private:
@@ -42,6 +45,8 @@ private:
     juce::TextButton playButton{ "play " };
     juce::TextButton goToStartButton{ "|<" };
     juce::TextButton goToEndButton{ ">|" };
+    juce::TextButton previousButton{ "Previous" };
+    juce::TextButton nextButton{ "Next" };
     
     juce::TextButton muteButton{ "Mute" };
     juce::TextButton loopButton{ "Loop" };

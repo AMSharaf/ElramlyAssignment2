@@ -3,7 +3,7 @@
 PlayerGUI::PlayerGUI::PlayerGUI(PlayerAudio& audioEngine) : playerAudio(audioEngine)
 {
     // Add buttons
-    for (auto* btn : { &loadButton, &restartButton , &stopButton,&pauseButton,&playButton,&goToStartButton,&goToEndButton,&muteButton, &loopButton })
+    for (auto* btn : { &loadButton, &restartButton , &stopButton,&pauseButton,&playButton,&goToStartButton,&goToEndButton,&muteButton, &loopButton,&nextButton,&previousButton })
     {
         btn->addListener(this);
         addAndMakeVisible(btn);
@@ -80,8 +80,8 @@ void PlayerGUI::resized()
     goToEndButton.setBounds(420, y, 80, 40);
     pauseButton.setBounds(520, y, 80, 40);
     playButton.setBounds(620, y, 80, 40);
-    /*prevButton.setBounds(340, y, 80, 40);
-    nextButton.setBounds(440, y, 80, 40);*/
+    previousButton.setBounds(220, 4*y, 80, 40);
+    nextButton.setBounds(320, 4*y, 80, 40);
     
     muteButton.setBounds(20, 4*y, 80, 40);
     loopButton.setBounds(120,  4*y, 80, 40);
@@ -112,8 +112,7 @@ void PlayerGUI::paint(juce::Graphics& g)
     lookAndFeel.setColour(juce::Slider::thumbColourId, juce::Colour(0xff7F8CAA));
     lookAndFeel.setColour(juce::Slider::trackColourId, juce::Colour(0xffE7F2EF));
     lookAndFeel.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0xffE7F2EF));
-    //loopSlider.setColour(juce::Slider::trackColourId, juce::Colours::grey);
-    //loopSlider.setColour(juce::Slider::thumbColourId, juce::Colour(0xffFFC400));
+
 }
 
 void PlayerGUI::paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected)
@@ -187,27 +186,21 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         if (isMuted)
         {
             playerAudio.setGain(0.0f);
-            muteButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
             muteButton.setButtonText("Unmute");
         }
         else
         {
             playerAudio.setGain(volumeSlider.getValue());
-            muteButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
             muteButton.setButtonText("Mute");
         }
     }
     
     if (button == &loopButton)
     {
-        if (button->getToggleState()) {
-			loopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+        if (button->getToggleState()) 
             loopButton.setButtonText("Looping");
-        }
-        else {
-            loopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+        else 
 			loopButton.setButtonText("Loop");
-        }
     }
 
     if (button == &restartButton)
@@ -234,6 +227,13 @@ void PlayerGUI::buttonClicked(juce::Button* button)
     }
     if (button == &goToEndButton) {
         playerAudio.setPosition(playerAudio.getLength()-5);
+    }
+
+    if (button == &nextButton) {
+        getNextTrack();
+    }
+    if (button == &previousButton) {
+        getPrviousTrack();
     }
     
 }
@@ -323,4 +323,13 @@ void PlayerGUI::listBoxItemClicked(int rowNumber, const juce::MouseEvent& e)
 void PlayerGUI::ChangeVolumeSlider()
 {
 	volumeSlider.setValue(playerAudio.getGain());
+}
+
+void PlayerGUI::getNextTrack()
+{
+    playerAudio.playNextTrack();
+}
+void PlayerGUI::getPrviousTrack()
+{
+	playerAudio.playPrviousTrack();    
 }

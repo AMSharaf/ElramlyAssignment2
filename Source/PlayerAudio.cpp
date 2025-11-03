@@ -159,6 +159,12 @@ void PlayerAudio::playNextTrack()
     int nextTrack = (currentTrackIndex + 1) % trackList.size();
     playTrack(nextTrack);
 }
+void PlayerAudio::playPrviousTrack()
+{
+    // Move to the next track, wrapping around to the beginning if at the end
+    int nextTrack = (currentTrackIndex - 1) % trackList.size();
+    playTrack(nextTrack);
+}
 
 void PlayerAudio::addFilesToPlaylist(const juce::Array<juce::File>& files)
 {

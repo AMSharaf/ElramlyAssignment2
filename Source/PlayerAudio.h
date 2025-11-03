@@ -27,6 +27,7 @@ public:
     void addFilesToPlaylist(const juce::Array<juce::File>& files);
     void playTrack(int trackIndex);
     void playNextTrack();
+    void playPrviousTrack();
 
     int getNumTracks() const;
     juce::String getTrackTitle(int trackIndex) const;
