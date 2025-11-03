@@ -25,6 +25,8 @@ public:
     void paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected) override;
     void listBoxItemClicked(int rowNumber, const juce::MouseEvent& e) override;
 
+    bool wasPlaying=false;
+
 private:
     PlayerAudio playerAudio;
 
@@ -54,8 +56,7 @@ private:
     juce::ListBox playlistBox;
     std::unique_ptr<juce::FileChooser> fileChooser;
 
-    bool wasPlaying = false;
-
+   
 
     // Event handlers
     void buttonClicked(juce::Button* button) override;

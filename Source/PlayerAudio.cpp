@@ -1,4 +1,4 @@
-﻿#include "PlayerAudio.h"
+#include "PlayerAudio.h"
 
 PlayerAudio::PlayerAudio()
 {
@@ -67,6 +67,12 @@ bool PlayerAudio::loadFile(const juce::File& file)
 
     }
     return true;
+}
+
+bool PlayerAudio::hasFinished() 
+{
+    // This will be true only if the transport stopped because it hit the end.
+    return transportSource.hasStreamFinished();
 }
 
 void PlayerAudio::play()

@@ -239,7 +239,7 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider)
 void PlayerGUI::timerCallback()
 {
     bool isPlaying = playerAudio.isPlaying();
-    if (wasPlaying && !isPlaying)
+    if (playerAudio.hasFinished() && !isPlaying && wasPlaying)
     {
         playerAudio.playNextTrack();
     }

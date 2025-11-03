@@ -13,6 +13,7 @@ public:
     void setResamplingRatio(float r);
     bool loadFile(const juce::File& file);
     bool isPlaying();
+    bool hasFinished() ;
     void play();
     void stop();
     juce::String getMeta();
